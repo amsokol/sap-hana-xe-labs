@@ -1,0 +1,57 @@
+# DO NOT RUN THIS SCRIPT - EXECUTE COMMANDS ONE BY ONE
+
+# Configuration:
+# sap-hxe01.amsokol.me [Fedora server] - host to install SAP HANA XE 2.0
+
+
+# <STEP #01>: CONFIGURE DNS
+# add to BIND forward.amsokol.me.zone file:
+@                         IN  A    192.168.0.130
+
+sap-hxe01                 IN  A    192.168.0.130
+
+# add to BIND reverse.amsokol.me.zone file:
+sap-hxe01                 IN  A    192.168.0.130
+
+130                       IN  PTR  sap-hxe01.amsokol.me.
+
+# check BIND Configuration
+# reload BIND Configuration
+# </STEP #01>
+
+
+# <STEP #02>: install and configure sap-hxe01.amsokol.me
+# Configuration:
+# OS = CentOS Minimal
+# CPU = 4
+# RAM = 10G
+# sap-hxe01.amsokol.me.vhdx (/root=223G, swap=32G, others=1G) = 256G
+# IPv4 Settings = Manual
+# IP = 192.168.0.130
+# Mask = 255.255.255.0
+# Gateway = 192.168.0.1
+# DNS server = 192.168.0.1
+
+# login as root
+
+# update os:
+dnf -y update
+reboot
+poweroff
+# create checkpoint "clear installation"
+
+# login as root
+dnf -y groupinstall "C Development Tools and Libraries"
+
+mkdir /sap-hana-xe-setup
+# copy hxe.tgz and hxexsa.tgz to /sap-hana-xe-setup
+cd /sap-hana-xe-setup
+tar -xvzf ./hxe.tgz
+tar -xvzf ./hxexsa.tgz
+chmod -R 777 /sap-hana-xe-setup
+poweroff
+# create checkpoint "before install HXE"
+
+# login as root
+cd /sap-hana-xe-setup
+./setup_hxe.sh
